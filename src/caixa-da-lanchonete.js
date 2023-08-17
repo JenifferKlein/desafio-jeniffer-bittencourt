@@ -1,6 +1,7 @@
 class CaixaDaLanchonete {
 
     calcularValorDaCompra(metodoDePagamento, itens) {
+        //lista de precos
         const precos = {
             cafe: 3.00,
             chantily: 1.50, //item extra(cafe)
@@ -11,18 +12,18 @@ class CaixaDaLanchonete {
             combo1: 9.50,
             combo2: 7.50
         };
-
-        let total = 0;
-
-        const verifica = this.verificaItem(itens);
-        if(verifica === 1){
+        //variavel para armazenar o total da compra
+        let total = 0; 
+        //metodo rensponsavel para verificar se um item extra foi pedido sem o item principal
+        const verifica = this.verificaItem(itens); 
+        if(verifica === 1){                       
             return "Item extra não pode ser pedido sem o principal";
         }
-
+        //verifica se um carrinho esta vazio
         if(itens.length === 0){
             return "Não há itens no carrinho de compra!";
         }
-
+        //para cada item da lista, verifica se a quantidade é valida e se o item existe na lista
         for (const item of itens) {
             const [nome, quantidade] = item.split(',');
             if(quantidade <= 0){
@@ -31,31 +32,27 @@ class CaixaDaLanchonete {
             if(!precos[nome]){
                 return "Item inválido!";
             }
-
+            //se ele existir então é calculado o preco total
             if (precos[nome]) {
                 total += precos[nome] * parseInt(quantidade);
             }
         }
-
-        if(metodoDePagamento !='credito' && metodoDePagamento != 'debito' && metodoDePagamento != 'dinheiro' ){
-            return "Forma de pagamento inválida!";
-        }
-
-        if (metodoDePagamento === 'dinheiro') {
-            total *= 0.95;
-            return this.formataValor(total.toFixed(2));
-        }
-
-        if (metodoDePagamento === 'credito') {
-            total += (total * 0.03);
-            return this.formataValor(total.toFixed(2));
-        }
-
-        if (metodoDePagamento === 'debito') {
-            return this.formataValor(total.toFixed(2));
+        //verifica a forma de pagamento para poder fazer o calculo de acordo com o soliciado para cada metodo de pagamento
+        const formaPagamento = metodoDePagamento;
+        switch(formaPagamento){
+            case 'credito':
+                total += (total * 0.03);
+                return this.formataValor(total.toFixed(2));
+            case 'debito':
+                return this.formataValor(total.toFixed(2));
+            case 'dinheiro':
+                total *= 0.95;
+                return this.formataValor(total.toFixed(2));
+            default:
+                return "Forma de pagamento inválida!";
         }
     }
-    
+    //metodo para formatar o valor adicionando o R$ e trocando o . por ,
     formataValor(valor) {
         //return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         return `R$ ${valor.toString().replace(".", ",")}`;
